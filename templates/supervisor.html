@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supervisor Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h2 {
+        color: #333;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .section {
+        margin-bottom: 30px;
+      }
+      form {
+        margin: 10px 0;
+      }
+      input[type="text"] {
+        width: 80%;
+        padding: 5px;
+      }
+      button {
+        padding: 5px 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Frontdesk AI Supervisor Dashboard</h1>
+
+    <div class="section">
+      <h2>Pending Help Requests</h2>
+      {% if pending_requests %}
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Caller ID</th>
+          <th>Question</th>
+          <th>Created At</th>
+          <th>Action</th>
+        </tr>
+        {% for req in pending_requests %}
+        <tr>
+          <td>{{ req.id }}</td>
+          <td>{{ req.caller_id }}</td>
+          <td>{{ req.question }}</td>
+          <td>{{ req.created_at }}</td>
+          <td>
+            <form action="/supervisor/respond" method="POST">
+              <input type="hidden" name="request_id" value="{{ req.id }}" />
+              <input
+                type="text"
+                name="answer"
+                placeholder="Enter answer"
+                required
+              />
+              <button type="submit">Submit Answer</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p>No pending requests.</p>
+      {% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Resolved Help Requests</h2>
+      {% if resolved_requests %}
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Caller ID</th>
+          <th>Question</th>
+          <th>Answer</th>
+          <th>Resolved At</th>
+        </tr>
+        {% for req in resolved_requests %}
+        <tr>
+          <td>{{ req.id }}</td>
+          <td>{{ req.caller_id }}</td>
+          <td>{{ req.question }}</td>
+          <td>{{ req.supervisor_response }}</td>
+          <td>{{ req.resolved_at }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p>No resolved requests.</p>
+      {% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Unresolved Help Requests</h2>
+      {% if unresolved_requests %}
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Caller ID</th>
+          <th>Question</th>
+          <th>Created At</th>
+        </tr>
+        {% for req in unresolved_requests %}
+        <tr>
+          <td>{{ req.id }}</td>
+          <td>{{ req.caller_id }}</td>
+          <td>{{ req.question }}</td>
+          <td>{{ req.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p>No unresolved requests.</p>
+      {% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Learned Answers (Knowledge Base)</h2>
+      {% if knowledge_base %}
+      <table>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+          <th>Added At</th>
+        </tr>
+        {% for entry in knowledge_base %}
+        <tr>
+          <td>{{ entry.question }}</td>
+          <td>{{ entry.answer }}</td>
+          <td>{{ entry.added_at }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p>No learned answers in the knowledge base.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
